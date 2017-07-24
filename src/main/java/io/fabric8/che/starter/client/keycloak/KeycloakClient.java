@@ -39,10 +39,10 @@ public class KeycloakClient {
     @Value("${OSO_ADMIN_TOKEN:#{null}}")
     private String openShiftAdminToken;
 
-    @Value("${OPENSHIFT_TOKEN_URL:https://sso.prod-preview.openshift.io/auth/realms/fabric8/broker/openshift-v3/token}")
+    @Value("${OPENSHIFT_TOKEN_URL:https://sso.openshift.io/auth/realms/fabric8/broker/openshift-v3/token}")
     private String openShiftTokenUrl;
 
-    @Value("${GITHUB_TOKEN_URL:https://sso.prod-preview.openshift.io/auth/realms/fabric8/broker/github/token}")
+    @Value("${GITHUB_TOKEN_URL:https://sso.openshift.io/auth/realms/fabric8/broker/github/token}")
     private String gitHubTokenUrl;
 
     public String getOpenShiftToken(String keycloakToken) throws JsonProcessingException, IOException, KeycloakException {

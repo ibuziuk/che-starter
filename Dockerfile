@@ -6,9 +6,9 @@ ENV JAVA_HOME /etc/alternatives/jre
 ENV CHE_STARTER_HOME /opt/che-starter
 
 ## Default ENV variable values
-ENV OSO_ADDRESS tsrv.devshift.net:8443
-ENV OSO_DOMAIN_NAME tsrv.devshift.net
-ENV KUBERNETES_CERTS_CA_FILE /opt/che-starter/tsrv.devshift.net.cer
+ENV OSO_ADDRESS api.starter-us-east-2.openshift.com
+ENV OSO_DOMAIN_NAME api.starter-us-east-2.openshift.com
+ENV KUBERNETES_CERTS_CA_FILE /opt/che-starter/api.starter-us-east-2.openshift.com.cer
 
 RUN yum update -y && \
     yum install -y \
