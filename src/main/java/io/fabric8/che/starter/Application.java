@@ -12,11 +12,10 @@
  */
 package io.fabric8.che.starter;
 
+import static com.google.common.base.Predicates.or;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 import java.util.concurrent.Executor;
-
-import static com.google.common.base.Predicates.or;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +24,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import com.uber.jaeger.Configuration;
+import com.uber.jaeger.samplers.ProbabilisticSampler;
 
 import io.fabric8.che.starter.mdc.MdcTaskDecorator;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -63,6 +65,12 @@ public class Application extends AsyncConfigurerSupport {
                 .build();
     }
 
+    @Bean
+    public io.opentracing.Tracer jaegerTracer() {
+        return new Configuration("che-starter", new Configuration.SamplerConfiguration(ProbabilisticSampler.TYPE, 1),
+                new Configuration.ReporterConfiguration()).getTracer();
+    }
+
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Che Starter API")
@@ -70,4 +78,6 @@ public class Application extends AsyncConfigurerSupport {
                 .version("1.0")
                 .build();
     }
+    
+
 }

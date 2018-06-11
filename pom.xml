@@ -38,6 +38,7 @@
         <java.version>1.8</java.version>
         <io.fabric8.client.version>2.0.3</io.fabric8.client.version>
         <io.fabric8.api.version>2.2.194</io.fabric8.api.version>
+        <io.opentracing.version>0.0.4</io.opentracing.version>
         <org.apache.commons.lang.version>3.5</org.apache.commons.lang.version>
         <org.apache.commons.io.version>2.6</org.apache.commons.io.version>
         <swagger.version>2.6.1</swagger.version>
@@ -48,6 +49,7 @@
         <unleash.client.java.version>2.1.4</unleash.client.java.version>
         <org.apache.httpcomponents.version>4.5.3</org.apache.httpcomponents.version>
         <jacoco.maven.plugin.version>0.8.0</jacoco.maven.plugin.version>
+        <jaegerVersion>0.18.0</jaegerVersion>
     </properties>
 
     <dependencies>
@@ -157,6 +159,18 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${org.apache.commons.io.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-web-autoconfigure</artifactId>
+            <version>${io.opentracing.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.uber.jaeger</groupId>
+            <artifactId>jaeger-core</artifactId>
+            <version>${jaegerVersion}</version>
         </dependency>
 
     </dependencies>
