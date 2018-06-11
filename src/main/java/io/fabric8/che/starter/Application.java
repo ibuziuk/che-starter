@@ -17,6 +17,9 @@ import static springfox.documentation.builders.PathSelectors.regex;
 
 import java.util.concurrent.Executor;
 
+import javax.naming.ConfigurationException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -25,10 +28,8 @@ import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.uber.jaeger.Configuration;
-import com.uber.jaeger.samplers.ProbabilisticSampler;
-
 import io.fabric8.che.starter.mdc.MdcTaskDecorator;
+import io.fabric8.che.starter.opentracing.TracerPicker;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
@@ -40,6 +41,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EnableAsync
 public class Application extends AsyncConfigurerSupport {
+    
+    @Autowired
+    TracerPicker tracerPicker;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -66,9 +70,8 @@ public class Application extends AsyncConfigurerSupport {
     }
 
     @Bean
-    public io.opentracing.Tracer jaegerTracer() {
-        return new Configuration("che-starter", new Configuration.SamplerConfiguration(ProbabilisticSampler.TYPE, 1),
-                new Configuration.ReporterConfiguration()).getTracer();
+    public io.opentracing.Tracer getTracer() throws ConfigurationException {
+        return tracerPicker.getTracer();
     }
 
     private ApiInfo apiInfo() {
