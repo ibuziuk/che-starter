@@ -17,9 +17,6 @@ import javax.naming.ConfigurationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.uber.jaeger.Configuration;
-import com.uber.jaeger.samplers.ProbabilisticSampler;
-
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
 import brave.sampler.Sampler;
@@ -32,15 +29,14 @@ import zipkin.reporter.okhttp3.OkHttpSender;
 @Component
 public class TracerPicker {
     private static final String SERVICE_NAME = "che-starter";
-    
+
     @Value("${che.opentracing.tracer:jaeger}")
     private String tracerImpl;
 
     public Tracer getTracer() throws ConfigurationException {
         Tracer tracer;
         if (tracerImpl.equals("jaeger")) {
-            tracer =  new Configuration(SERVICE_NAME, new Configuration.SamplerConfiguration(ProbabilisticSampler.TYPE, 1),
-                    new Configuration.ReporterConfiguration()).getTracer();
+            tracer = new io.jaegertracing.Tracer.Builder(SERVICE_NAME).build();
         } else if (tracerImpl.equals("zipkin")) {
             OkHttpSender okHttpSender = OkHttpSender.builder()
                     .encoding(Encoding.JSON)

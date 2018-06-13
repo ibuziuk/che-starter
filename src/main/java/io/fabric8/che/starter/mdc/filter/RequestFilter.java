@@ -13,6 +13,8 @@
 package io.fabric8.che.starter.mdc.filter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,6 +30,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import io.fabric8.che.starter.client.keycloak.KeycloakTokenParser;
+import io.opentracing.Scope;
+import io.opentracing.log.Fields;
+import io.opentracing.tag.StringTag;
 
 @Component
 public class RequestFilter extends GenericFilterBean {
@@ -40,9 +45,13 @@ public class RequestFilter extends GenericFilterBean {
     @Autowired
     KeycloakTokenParser keycloakTokenParser;
 
+    @Autowired
+    io.opentracing.Tracer tracer;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        Scope scope = tracer.scopeManager().active();
         try {
             HttpServletRequest req = (HttpServletRequest) request;
             String requestId = req.getHeader(REQUEST_ID_HEADER);
@@ -53,8 +62,26 @@ public class RequestFilter extends GenericFilterBean {
 
             MDC.put(REQUEST_ID_MDC_KEY, requestId);
             MDC.put(IDENTITY_ID_MDC_KEY, identityId);
+
+            if (scope != null) {
+                StringTag identityIdTag = new StringTag(IDENTITY_ID_MDC_KEY);
+                identityIdTag.set(scope.span(), identityId);
+                
+                StringTag requestIdTag = new StringTag(REQUEST_ID_MDC_KEY);
+                requestIdTag.set(scope.span(), requestId);
+            }
+
             chain.doFilter(request, response);
-        } finally {
+        } catch (Exception e) {
+            if (scope != null) {
+                Map map = new HashMap<>();
+                map.put(Fields.EVENT, "error");
+                map.put(Fields.ERROR_OBJECT, e);
+                map.put(Fields.MESSAGE, e.getMessage());
+                scope.span().log(map);
+            }
+            throw e;
+        }finally {
             MDC.clear();
         }
     }

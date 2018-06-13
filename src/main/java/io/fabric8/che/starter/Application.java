@@ -41,7 +41,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EnableAsync
 public class Application extends AsyncConfigurerSupport {
-    
+
     @Autowired
     TracerPicker tracerPicker;
 
