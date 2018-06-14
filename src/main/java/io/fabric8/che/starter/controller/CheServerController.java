@@ -76,6 +76,9 @@ public class CheServerController {
         if (scope != null) {
             scope.span().log("Obtaining che server state event");
         }
+        try (Scope newScope = tracer.buildSpan("someWork").startActive(true)) {
+            LOG.info("Doing some work");
+        }
         String requestURL = request.getRequestURL().toString();
         return CheServerHelper.generateCheServerInfo(isReady, requestURL, true, isClusterFull);
     }
