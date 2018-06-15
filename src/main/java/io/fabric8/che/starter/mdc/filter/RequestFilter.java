@@ -51,7 +51,7 @@ public class RequestFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        Scope scope = null;
+        Scope scope = tracer.scopeManager().active();
         try {
             HttpServletRequest req = (HttpServletRequest) request;
             String requestId = req.getHeader(REQUEST_ID_HEADER);

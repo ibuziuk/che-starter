@@ -12,6 +12,8 @@
  */
 package io.fabric8.che.starter.opentracing;
 
+import java.util.Arrays;
+
 import javax.naming.ConfigurationException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,12 +21,13 @@ import org.springframework.stereotype.Component;
 
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
-import brave.sampler.Sampler;
+import brave.propagation.B3Propagation;
+import brave.propagation.ExtraFieldPropagation;
+import brave.propagation.Propagation.Factory;
 import io.opentracing.Tracer;
-import zipkin.Span;
-import zipkin.reporter.AsyncReporter;
-import zipkin.reporter.Encoding;
-import zipkin.reporter.okhttp3.OkHttpSender;
+import zipkin2.Span;
+import zipkin2.reporter.AsyncReporter;
+import zipkin2.reporter.okhttp3.OkHttpSender;
 
 @Component
 public class TracerPicker {
@@ -38,18 +41,20 @@ public class TracerPicker {
         if (tracerImpl.equals("jaeger")) {
             tracer = new io.jaegertracing.Tracer.Builder(SERVICE_NAME).build();
         } else if (tracerImpl.equals("zipkin")) {
-            OkHttpSender okHttpSender = OkHttpSender.builder()
-                    .encoding(Encoding.JSON)
-                    .endpoint("http://localhost:9411/api/v1/spans")
-                    .build();
-            AsyncReporter<Span> reporter = AsyncReporter.builder(okHttpSender).build();
-            Tracing braveTracer = Tracing.newBuilder()
+            OkHttpSender sender = OkHttpSender.create("http://127.0.0.1:9411/api/v2/spans");
+            AsyncReporter<Span> spanReporter = AsyncReporter.create(sender);
+
+            Factory propagationFactory = ExtraFieldPropagation.newFactoryBuilder(B3Propagation.FACTORY)
+            .addPrefixedFields("baggage-", Arrays.asList("country-code", "user-id"))
+            .build();
+
+            Tracing braveTracing = Tracing.newBuilder()
                     .localServiceName(SERVICE_NAME)
-                    .reporter(reporter)
-                    .traceId128Bit(true)
-                    .sampler(Sampler.ALWAYS_SAMPLE)
+                    .propagationFactory(propagationFactory)
+                    .spanReporter(spanReporter)
                     .build();
-            tracer = BraveTracer.create(braveTracer);
+
+            tracer = BraveTracer.create(braveTracing);
         } else {
             throw new ConfigurationException(tracerImpl + " is not supported");
         }

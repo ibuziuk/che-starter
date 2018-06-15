@@ -176,13 +176,19 @@
         <dependency>
             <groupId>io.opentracing.brave</groupId>
             <artifactId>brave-opentracing</artifactId>
-            <version>0.20.0</version>
+            <version>0.31.1</version>
         </dependency>
 
         <dependency>
-            <groupId>io.zipkin.reporter</groupId>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-sender-okhttp3</artifactId>
-            <version>0.10.0</version>
+            <version>2.7.3</version>
         </dependency>
 
     </dependencies>

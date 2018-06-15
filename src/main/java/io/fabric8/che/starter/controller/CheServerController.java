@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.fabric8.che.starter.client.keycloak.KeycloakTokenValidator;
 import io.fabric8.che.starter.model.server.CheServerInfo;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 import io.fabric8.che.starter.oso.ClusterCapacityTracker;
 import io.fabric8.che.starter.util.CheServerHelper;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +34,10 @@ import io.swagger.annotations.ApiParam;
 @CrossOrigin
 @RestController
 public class CheServerController {
+
+    @Autowired
+    OpentracingLoggerWrapper LOG;
+
     @Autowired
     ClusterCapacityTracker clusterCapacityTracker;
 

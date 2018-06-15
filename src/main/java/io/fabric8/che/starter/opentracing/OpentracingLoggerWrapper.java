@@ -91,10 +91,23 @@ public class OpentracingLoggerWrapper {
         if (scope != null) {;
             Map map = new HashMap<>();
             map.put(Fields.EVENT, "error");
+            map.put(Fields.ERROR_OBJECT, message);
             map.put(Fields.MESSAGE, message);
             scope.span().log(map);
         }
         LOG.error(message);
+    }
+
+    public void error(String message, Exception e) {
+        Scope scope = tracer.scopeManager().active();
+        if (scope != null) {
+            Map map = new HashMap<>();
+            map.put(Fields.EVENT, "error");
+            map.put(Fields.ERROR_OBJECT, e);
+            map.put(Fields.MESSAGE, e.getMessage());
+            scope.span().log(map);
+        }
+        LOG.error(message, e);
     }
 
     public void debug(String message, Object... object) {
@@ -106,19 +119,6 @@ public class OpentracingLoggerWrapper {
             scope.span().log(map);
         }
         LOG.warn(message, object);
-    }
-
-    public void error(String message, Exception e) {
-        Scope scope = tracer.scopeManager().active();
-        if (scope != null) {
-            scope.span().log(message);
-            Map map = new HashMap<>();
-            map.put(Fields.EVENT, "error");
-            map.put(Fields.ERROR_OBJECT, e);
-            map.put(Fields.MESSAGE, e.getMessage());
-            scope.span().log(map);
-        }
-        LOG.error(message, e);
     }
 
 }
