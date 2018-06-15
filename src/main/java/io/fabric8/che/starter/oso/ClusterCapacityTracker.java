@@ -16,8 +16,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +25,14 @@ import org.springframework.web.client.RestTemplate;
 
 import io.fabric8.che.starter.client.keycloak.KeycloakRestTemplate;
 import io.fabric8.che.starter.exception.NamespaceNotFoundException;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 import io.fabric8.che.starter.oso.user.services.model.Namespace;
 import io.fabric8.che.starter.oso.user.services.model.UserServices;
 
 @Component
 public class ClusterCapacityTracker {
-    private static final Logger LOG = LoggerFactory.getLogger(ClusterCapacityTracker.class);
+    @Autowired
+    OpentracingLoggerWrapper LOG;
 
     @Value("${OSIO_API_BASE_URL:https://api.prod-preview.openshift.io/api}")
     private String apiBaseUrl;

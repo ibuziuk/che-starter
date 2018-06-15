@@ -19,8 +19,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,6 +46,7 @@ import io.fabric8.che.starter.exception.WorkspaceNotFound;
 import io.fabric8.che.starter.model.request.WorkspaceCreateParams;
 import io.fabric8.che.starter.model.workspace.Workspace;
 import io.fabric8.che.starter.model.workspace.WorkspaceStatus;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 import io.fabric8.che.starter.util.WorkspaceHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -55,7 +54,8 @@ import io.swagger.annotations.ApiParam;
 @CrossOrigin
 @RestController
 public class WorkspaceController {
-    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceController.class);
+    @Autowired
+    OpentracingLoggerWrapper LOG;
 
     @Autowired
     WorkspaceClient workspaceClient;

@@ -13,8 +13,6 @@
 package io.fabric8.che.starter.client;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,11 +26,13 @@ import io.fabric8.che.starter.client.github.GitHubClient;
 import io.fabric8.che.starter.client.keycloak.KeycloakRestTemplate;
 import io.fabric8.che.starter.model.WorkspacePreferences;
 import io.fabric8.che.starter.model.github.GitHubUserInfo;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 import io.fabric8.che.starter.util.CheServerUrlProvider;
 
 @Component
 public class WorkspacePreferencesClient {
-    private static final Logger LOG = LoggerFactory.getLogger(WorkspacePreferencesClient.class);
+    @Autowired
+    OpentracingLoggerWrapper LOG;
 
     @Autowired
     GitHubClient gitHubClient;

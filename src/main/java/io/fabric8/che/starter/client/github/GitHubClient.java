@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,11 +33,14 @@ import io.fabric8.che.starter.exception.GitHubOAthTokenException;
 import io.fabric8.che.starter.model.Token;
 import io.fabric8.che.starter.model.github.GitHubEmail;
 import io.fabric8.che.starter.model.github.GitHubUserInfo;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 import io.fabric8.che.starter.util.CheServerUrlProvider;
 
 @Component
 public class GitHubClient {
-    private static final Logger LOG = LoggerFactory.getLogger(GitHubClient.class);
+
+    @Autowired
+    OpentracingLoggerWrapper LOG;
 
     @Value("${GITHUB_USER_URL:https://api.github.com/user}")
     private String GITHUB_USER_URL;

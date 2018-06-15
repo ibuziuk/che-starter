@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -45,6 +43,7 @@ import io.fabric8.che.starter.model.workspace.Workspace;
 import io.fabric8.che.starter.model.workspace.WorkspaceConfig;
 import io.fabric8.che.starter.model.workspace.WorkspaceStatus;
 import io.fabric8.che.starter.model.workspace.WorkspaceV6;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 import io.fabric8.che.starter.util.CheServerUrlProvider;
 import io.fabric8.che.starter.util.ProjectHelper;
 import io.fabric8.che.starter.util.WorkspaceHelper;
@@ -52,7 +51,9 @@ import io.fabric8.che.starter.util.WorkspaceLegacyFormatAdapter;
 
 @Component
 public class WorkspaceClient {
-    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceClient.class);
+
+    @Autowired
+    OpentracingLoggerWrapper LOG;
 
     @Value("${che.workspace.start.timeout}")
     private long workspaceStartTimeout;

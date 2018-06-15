@@ -15,8 +15,6 @@ package io.fabric8.che.starter.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,26 +23,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.fabric8.che.starter.client.keycloak.KeycloakTokenParser;
 import io.fabric8.che.starter.client.keycloak.KeycloakTokenValidator;
 import io.fabric8.che.starter.model.server.CheServerInfo;
 import io.fabric8.che.starter.oso.ClusterCapacityTracker;
 import io.fabric8.che.starter.util.CheServerHelper;
-import io.opentracing.Scope;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @CrossOrigin
 @RestController
 public class CheServerController {
-    private static final Logger LOG = LoggerFactory.getLogger(CheServerController.class);
-
-    @Autowired
-    io.opentracing.Tracer tracer;
-    
-    @Autowired
-    KeycloakTokenParser keycoakTokenParser;
-
     @Autowired
     ClusterCapacityTracker clusterCapacityTracker;
 
@@ -72,13 +60,6 @@ public class CheServerController {
     }
 
     private CheServerInfo getCheServerInfo(HttpServletRequest request, boolean isReady, boolean isClusterFull) {
-        Scope scope = tracer.scopeManager().active();
-        if (scope != null) {
-            scope.span().log("Obtaining che server state event");
-        }
-        try (Scope newScope = tracer.buildSpan("someWork").startActive(true)) {
-            LOG.info("Doing some work");
-        }
         String requestURL = request.getRequestURL().toString();
         return CheServerHelper.generateCheServerInfo(isReady, requestURL, true, isClusterFull);
     }

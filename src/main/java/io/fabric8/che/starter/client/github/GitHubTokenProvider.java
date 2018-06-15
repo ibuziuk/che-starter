@@ -14,8 +14,7 @@ package io.fabric8.che.starter.client.github;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +27,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.fabric8.che.starter.client.keycloak.KeycloakRestTemplate;
 import io.fabric8.che.starter.exception.KeycloakException;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 
 @Component
 public class GitHubTokenProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(GitHubTokenProvider.class);
     private static final String ACCESS_TOKEN = "access_token";
+
+    @Autowired
+    OpentracingLoggerWrapper LOG;
 
     @Value("${GITHUB_TOKEN_URL:https://auth.prod-preview.openshift.io/api/token?for=https://github.com}")
     private String gitHubTokenUrl;

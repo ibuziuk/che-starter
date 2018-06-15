@@ -12,6 +12,13 @@
  */
 package io.fabric8.che.starter.util;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import io.fabric8.che.starter.model.DevMachine;
 import io.fabric8.che.starter.model.DevMachineRuntime;
 import io.fabric8.che.starter.model.project.Project;
@@ -26,16 +33,11 @@ import io.fabric8.che.starter.model.workspace.WorkspaceMachine;
 import io.fabric8.che.starter.model.workspace.WorkspaceMachineAttribute;
 import io.fabric8.che.starter.model.workspace.WorkspaceRecipe;
 import io.fabric8.che.starter.model.workspace.WorkspaceRuntime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import io.fabric8.che.starter.opentracing.OpentracingLoggerWrapper;
 
 public class WorkspaceComparator implements Comparator<Workspace> {
-    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceComparator.class);
+    @Autowired
+    OpentracingLoggerWrapper LOG;
 
     /**
      * Workspaces are equal if this method returns 0
