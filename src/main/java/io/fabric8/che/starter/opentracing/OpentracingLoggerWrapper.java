@@ -21,8 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.opentracing.Scope;
+import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.log.Fields;
+import io.opentracing.tag.Tags;
 
 @Component
 public class OpentracingLoggerWrapper {
@@ -86,30 +88,6 @@ public class OpentracingLoggerWrapper {
         LOG.debug(message);
     }
 
-    public void error(String message) {
-        Scope scope = tracer.scopeManager().active();
-        if (scope != null) {;
-            Map map = new HashMap<>();
-            map.put(Fields.EVENT, "error");
-            map.put(Fields.ERROR_OBJECT, message);
-            map.put(Fields.MESSAGE, message);
-            scope.span().log(map);
-        }
-        LOG.error(message);
-    }
-
-    public void error(String message, Exception e) {
-        Scope scope = tracer.scopeManager().active();
-        if (scope != null) {
-            Map map = new HashMap<>();
-            map.put(Fields.EVENT, "error");
-            map.put(Fields.ERROR_OBJECT, e);
-            map.put(Fields.MESSAGE, e.getMessage());
-            scope.span().log(map);
-        }
-        LOG.error(message, e);
-    }
-
     public void debug(String message, Object... object) {
         Scope scope = tracer.scopeManager().active();
         if (scope != null) {
@@ -119,6 +97,34 @@ public class OpentracingLoggerWrapper {
             scope.span().log(map);
         }
         LOG.warn(message, object);
+    }
+
+    public void error(String message) {
+        Scope scope = tracer.scopeManager().active();
+        if (scope != null) {
+            Span span = scope.span();
+            Tags.ERROR.set(span, true);
+            Map map = new HashMap<>();
+            map.put(Fields.EVENT, "error");
+            map.put(Fields.ERROR_OBJECT, message);
+            map.put(Fields.MESSAGE, message);
+            span.log(map);
+        }
+        LOG.error(message);
+    }
+
+    public void error(String message, Exception e) {
+        Scope scope = tracer.scopeManager().active();
+        if (scope != null) {
+            Span span = scope.span();
+            Tags.ERROR.set(span, true);
+            Map map = new HashMap<>();
+            map.put(Fields.EVENT, "error");
+            map.put(Fields.ERROR_OBJECT, e);
+            map.put(Fields.MESSAGE, e.getMessage());
+            span.log(map);
+        }
+        LOG.error(message, e);
     }
 
 }

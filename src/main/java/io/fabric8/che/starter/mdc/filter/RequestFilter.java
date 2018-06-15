@@ -31,8 +31,10 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import io.fabric8.che.starter.client.keycloak.KeycloakTokenParser;
 import io.opentracing.Scope;
+import io.opentracing.Span;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.StringTag;
+import io.opentracing.tag.Tags;
 
 @Component
 public class RequestFilter extends GenericFilterBean {
@@ -74,11 +76,13 @@ public class RequestFilter extends GenericFilterBean {
             chain.doFilter(request, response);
         } catch (Exception e) {
             if (scope != null) {
+                Span span = scope.span();
+                Tags.ERROR.set(span, true);
                 Map map = new HashMap<>();
                 map.put(Fields.EVENT, "error");
                 map.put(Fields.ERROR_OBJECT, e);
                 map.put(Fields.MESSAGE, e.getMessage());
-                scope.span().log(map);
+                span.log(map);
             }
             throw e;
         }finally {
