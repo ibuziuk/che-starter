@@ -26,6 +26,7 @@ import brave.propagation.ExtraFieldPropagation;
 import brave.propagation.Propagation.Factory;
 import io.opentracing.Tracer;
 import zipkin2.Span;
+import zipkin2.codec.SpanBytesEncoder;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.okhttp3.OkHttpSender;
 
@@ -41,8 +42,8 @@ public class TracerPicker {
         if (tracerImpl.equals("jaeger")) {
             tracer = new io.jaegertracing.Tracer.Builder(SERVICE_NAME).build();
         } else if (tracerImpl.equals("zipkin")) {
-            OkHttpSender sender = OkHttpSender.create("http://127.0.0.1:9411/api/v2/spans");
-            AsyncReporter<Span> spanReporter = AsyncReporter.create(sender);
+            OkHttpSender sender = OkHttpSender.create("http://zipkin-zipkin.192.168.42.113.nip.io/api/v1/spans");
+            AsyncReporter<Span> spanReporter = AsyncReporter.builder(sender).build(SpanBytesEncoder.JSON_V1);
 
             Factory propagationFactory = ExtraFieldPropagation.newFactoryBuilder(B3Propagation.FACTORY)
             .addPrefixedFields("baggage-", Arrays.asList("country-code", "user-id"))

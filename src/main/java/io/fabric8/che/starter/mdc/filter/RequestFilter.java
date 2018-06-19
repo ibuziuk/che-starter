@@ -13,6 +13,7 @@
 package io.fabric8.che.starter.mdc.filter;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,8 @@ import io.fabric8.che.starter.client.keycloak.KeycloakTokenParser;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
+import io.opentracing.propagation.Format;
+import io.opentracing.propagation.TextMapInjectAdapter;
 import io.opentracing.tag.StringTag;
 import io.opentracing.tag.Tags;
 
@@ -54,6 +57,7 @@ public class RequestFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         Scope scope = tracer.scopeManager().active();
+        Map<String, String> headers = getHeaders((HttpServletRequest) request);
         try {
             HttpServletRequest req = (HttpServletRequest) request;
             String requestId = req.getHeader(REQUEST_ID_HEADER);
@@ -71,8 +75,8 @@ public class RequestFilter extends GenericFilterBean {
                 
                 StringTag requestIdTag = new StringTag(REQUEST_ID_MDC_KEY);
                 requestIdTag.set(scope.span(), requestId);
+                tracer.inject(scope.span().context(), Format.Builtin.HTTP_HEADERS, new TextMapInjectAdapter(headers));
             }
-
             chain.doFilter(request, response);
         } catch (Exception e) {
             if (scope != null) {
@@ -106,6 +110,20 @@ public class RequestFilter extends GenericFilterBean {
 
     private String generateRequestId() {
         return RandomStringUtils.random(16, true, true).toLowerCase();
+    }
+
+    private Map<String, String> getHeaders(HttpServletRequest request) {
+
+        Map<String, String> map = new HashMap<String, String>();
+
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            map.put(key, value);
+        }
+
+        return map;
     }
 
 }

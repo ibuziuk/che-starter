@@ -109,7 +109,7 @@ public class WorkspaceController {
         String gitHubToken = keycloakClient.getGitHubToken(keycloakToken);
         Workspace workspace = workspaceClient.getWorkspaceByName(name, keycloakToken);
         stopOtherWorkspaces(workspace, keycloakToken);
-        setGitHubOAthTokenAndCommitterInfo(gitHubToken, keycloakToken);
+//        setGitHubOAthTokenAndCommitterInfo(gitHubToken, keycloakToken);
         return workspace;
     }
 
@@ -169,7 +169,7 @@ public class WorkspaceController {
      */
     private Workspace createWorkspaceFromParams(String gitHubToken, String keycloakToken, WorkspaceCreateParams params) throws StackNotFoundException, IOException, GitHubOAthTokenException, URISyntaxException {
         Workspace workspace = workspaceClient.createWorkspace(keycloakToken, params.getStackId(), params.getRepo(), params.getBranch(), params.getDescription());
-        setGitHubOAthTokenAndCommitterInfo(gitHubToken, keycloakToken);
+//        setGitHubOAthTokenAndCommitterInfo(gitHubToken, keycloakToken);
         return workspace;
     }
 
