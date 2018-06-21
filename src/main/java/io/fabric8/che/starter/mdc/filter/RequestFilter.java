@@ -69,10 +69,13 @@ public class RequestFilter extends GenericFilterBean {
             MDC.put(REQUEST_ID_MDC_KEY, requestId);
             MDC.put(IDENTITY_ID_MDC_KEY, identityId);
 
+            headers.put("X-Request-Id", requestId);
+            headers.put("X-B3-TraceId", requestId);
+
             if (scope != null) {
                 StringTag identityIdTag = new StringTag(IDENTITY_ID_MDC_KEY);
                 identityIdTag.set(scope.span(), identityId);
-                
+
                 StringTag requestIdTag = new StringTag(REQUEST_ID_MDC_KEY);
                 requestIdTag.set(scope.span(), requestId);
                 tracer.inject(scope.span().context(), Format.Builtin.HTTP_HEADERS, new TextMapInjectAdapter(headers));
