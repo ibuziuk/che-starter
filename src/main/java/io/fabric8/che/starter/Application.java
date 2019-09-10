@@ -40,7 +40,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class Application extends AsyncConfigurerSupport {
 
     public static void main(String[] args) {
-        // Test commit
         SpringApplication.run(Application.class, args);
     }
 
